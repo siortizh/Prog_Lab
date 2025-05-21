@@ -46,40 +46,28 @@ class GenProdCons:
 
 
 class RendezvousDEchange:
-    
-    def __init__(self):
+    def _init_(self):
+        self.lock = threading.Lock()
+        self.value = None
+        self.partner_ready = threading.Condition(self.lock)
+        self.has_partner = False
 
-        self.mutex = threading.Lock()
-
-        self.rendezvous = threading.Condition(self.mutex)
-
-        self.first_thread_arrived = False
-        self.first_thread_value = None
-        self.second_thread_value = None
-    
     def echanger(self, value):
-
-        with self.rendezvous:
-            if not self.first_thread_arrived:
-
-                self.first_thread_arrived = True
-                self.first_thread_value = value
-
-                self.rendezvous.wait()
-
-                result = self.second_thread_value
-
-                self.first_thread_arrived = False
-                self.first_thread_value = None
-                self.second_thread_value = None
-                
+        with self.lock:
+            if not self.has_partner:
+                # First thread arrives
+                self.value = value
+                self.has_partner = True
+                self.partner_ready.wait()
+                result = self.value
+                self.has_partner = False
+                self.partner_ready.notify()
                 return result
             else:
-
-                self.second_thread_value = value
-
-                result = self.first_thread_value
-
-                self.rendezvous.notify()
+                # Second thread arrives
+                result = self.value
+                self.value = value
+                self.partner_ready.notify()
+                self.partner_ready.wait()
                 
                 return result
