@@ -89,35 +89,11 @@ export RENDEZVOUSMODULE=<where-the-prod-cons-is-installed>
 Windows 
 
 ```shell
-python3 -m unittest test/test_basic_<your_algorithm>_fit.py
-python3 -m unittest test/test_other_<your_algorithm>_fit.py
+python3 -m unittest test/prod_con_test_<test_type>.py
+python3 -m unittest test/rendezvous_test_<test_type>.py
 ```
 
 ```shell
-python -m unittest test/test_basic_<your_algorithm>_fit.py
-python -m unittest test/test_other_<your_algorithm>_fit.py
+python -m unittest test/prod_con_test_<test_type>.py
+python -m unittest test/rendezvous_test_<test_type>.py
 ```
-
-## Execute cma simulator
-
-First install click
-
-```shell
-python3 -m pip install click
-```
-
-```shell
-python -p pip install click
-```
-
-To run the program
-
-```shell
-python3 cma.py --memmap .\resources\memmap\memmap_1.txt --reqs .\resources\reqs\req_1.txt
-```
-
-```shell
-python cma.py --memmap .\resources\memmap\memmap_1.txt --reqs .\resources\reqs\req_1.txt
-```
-
-The previous execution executes all algorithms you can change to execute different algorithm.
