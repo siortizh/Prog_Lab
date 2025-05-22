@@ -97,3 +97,11 @@ python3 -m unittest test/rendezvous_test_<test_type>.py
 python -m unittest test/prod_con_test_<test_type>.py
 python -m unittest test/rendezvous_test_<test_type>.py
 ```
+
+# Using `GenProdCons` and  `RendezvousDEchange`
+
+On the file [`main.py`](./main.py) you find a little program that uses
+the `GenProdCons` and `RendezvousDEchange`. This version is not completed yet.
+Follow the instruction of you teacher to complete.
+
+You and you colleague clone the repository, invite the teacher and complete the project.
