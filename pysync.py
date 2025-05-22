@@ -46,7 +46,7 @@ class GenProdCons:
 
 
 class RendezvousDEchange:
-    def _init_(self):
+    def __init__(self):
         self.lock = threading.Lock()
         self.value = None
         self.partner_ready = threading.Condition(self.lock)
