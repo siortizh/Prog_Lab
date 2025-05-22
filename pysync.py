@@ -5,69 +5,42 @@ import threading
 from collections import deque
 
 class GenProdCons:
-    
     def __init__(self, size=10):
-
-        if size <= 0:
-            raise ValueError("El tamaño del buffer debe ser mayor que 0")
-        
         self.size = size
-        self.buffer = deque(maxlen=size)
+        self.buffer = deque()
 
-        self.mutex = threading.Lock()
-
-        self.empty_slots = threading.Semaphore(size)
-        self.filled_slots = threading.Semaphore(0)
-    
     def __len__(self):
+        return len(self.buffer)
 
-        with self.mutex:
-            return len(self.buffer)
-    
-    def put(self, item):
+    def put(self, val):
+        self.buffer.append(val)
+        return val
 
-        self.empty_slots.acquire()
-
-        with self.mutex:
-            self.buffer.append(item)
-
-        self.filled_slots.release()
-    
     def get(self):
+        val = self.buffer.popleft()
+        return val
 
-        self.filled_slots.acquire()
-
-        with self.mutex:
-            item = self.buffer.popleft()
-
-        self.empty_slots.release()
-        
-        return item
 
 
 class RendezvousDEchange:
     def __init__(self):
         self.lock = threading.Lock()
+        self.thread_arrived = threading.Condition(self.lock)
+        self.b_thread = False
         self.value = None
-        self.partner_ready = threading.Condition(self.lock)
-        self.has_partner = False
 
     def echanger(self, value):
         with self.lock:
-            if not self.has_partner:
-                # First thread arrives
+            if not self.b_thread:
                 self.value = value
-                self.has_partner = True
-                self.partner_ready.wait()
-                result = self.value
-                self.has_partner = False
-                self.partner_ready.notify()
-                return result
+                self.b_thread = True
+                self.thread_arrived.wait()
+                res = self.value
+                self.b_thread = False
+                self.thread_arrived.notify()
             else:
-                # Second thread arrives
-                result = self.value
+                res = self.value
                 self.value = value
-                self.partner_ready.notify()
-                self.partner_ready.wait()
-                
-                return result
+                self.thread_arrived.notify()
+                self.thread_arrived.wait()
+            return res
